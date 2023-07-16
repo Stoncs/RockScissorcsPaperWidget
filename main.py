@@ -6,6 +6,9 @@ from concurrent.futures import ThreadPoolExecutor
 import ctypes
 import pyautogui
 from pygame._sdl2 import Window
+import pygetwindow as gw
+import win32con
+import win32gui
 
 pygame.init()
 
@@ -225,7 +228,7 @@ def check_end_game():
     return False, None
 
 def display_game_over_screen():
-    global element_types, element_x, element_y, element_speed, drag_window
+    global element_types, element_x, element_y, element_speed, drag_window, offset_y, offset_x
     game_over_font = pygame.font.Font(None, 25)
     game_over_text = game_over_font.render("Игра окончена!", True, (255, 255, 255))
 
@@ -335,6 +338,11 @@ while True:
             window.blit(element_images[element_index], (element_x[i], element_y[i]))
 
     pygame.display.flip()
+
+    # Устанавливаем окно поверх других окон (в неактивном состоянии)
+    hwnd = pygame.display.get_wm_info()["window"]
+    win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, 0, 0, 0, 0, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
+
     clock.tick(30)
 
     # Проверяем конец игры
